@@ -25,7 +25,8 @@ class PointNet(architectures.PointNetBase):
                     plain_last=False,
                     use_norm_in_first=False,
                     use_running_stats_in_norm=use_running_stats_in_norm,
-                )
+                ),
+                aggr="max",
             )
         )
         mlp_layers.insert(
@@ -52,7 +53,8 @@ class PointNet(architectures.PointNetBase):
                         ),
                         plain_last=False,
                         use_running_stats_in_norm=use_running_stats_in_norm,
-                    )
+                    ),
+                    aggr="max",
                 )
             )
             mlp_layers.insert(
