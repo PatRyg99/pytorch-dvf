@@ -504,10 +504,7 @@ class SEMLP(torch.nn.Module):
 
             if plain_last:
                 self.linear_layers.append(
-                    nn.Sequential(
-                        O3Dropout(dropout_prob),
-                        O3TensorProduct(*irreps[-2:], edge_attr_irreps)
-                    )
+                    O3TensorProduct(*irreps[-2:], edge_attr_irreps, dropout_prob=dropout_prob)
                 )
                 self.norm_layers.append(torch.nn.Identity())
                 self.activations.append(torch.nn.Identity())
