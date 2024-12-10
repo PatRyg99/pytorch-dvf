@@ -30,6 +30,15 @@ def get_o3_swish_gate_irreps(irreps: Irreps):
     return irreps_dict
 
 
+class O3Dropout(nn.Module):
+    def __init__(self, dropout_prob: float = 0.0):
+        super().__init__()
+        self.dropout = nn.Dropout(dropout_prob)
+
+    def forward(self, data_in1, data_in2=None) -> torch.Tensor:
+        return self.dropout(data_in1), data_in2
+
+
 """
 The following classes (O3TensorProduct and O3SwishGate) are copied and adapted from "E(3) Steerable GNN" on GitHub
 (https://github.com/RobDHess/Steerable-E3-GNN).
@@ -453,6 +462,7 @@ class SEMLP(torch.nn.Module):
         self,
         irreps: tuple,
         edge_attr_irreps=None,
+        dropout_prob: float = 0.0,
         plain_last: bool = True,
         use_norm_in_first: bool = True,
     ):
@@ -499,7 +509,10 @@ class SEMLP(torch.nn.Module):
 
             if plain_last:
                 self.linear_layers.append(
-                    O3TensorProduct(*irreps[-2:], edge_attr_irreps)
+                    nn.Sequential(
+                        O3Dropout(dropout_prob),
+                        O3TensorProduct(*irreps[-2:], edge_attr_irreps)
+                    )
                 )
                 self.norm_layers.append(torch.nn.Identity())
                 self.activations.append(torch.nn.Identity())

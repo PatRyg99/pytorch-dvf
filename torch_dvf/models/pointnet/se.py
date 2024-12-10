@@ -61,6 +61,7 @@ class SEPointNet(architectures.PointNetBase):
         output_irreps: Irreps,
         num_hierarchies: int,
         num_latent_channels: int,
+        dropout_prob: float = 0.0,
         max_order_latent_irreps: int = 1,
     ):
 
@@ -89,6 +90,7 @@ class SEPointNet(architectures.PointNetBase):
                     *[latent_irreps] * 2,
                     output_irreps,
                 ),
+                dropout_prob=dropout_prob,
                 use_norm_in_first=False,
             ),
         )
@@ -113,7 +115,8 @@ class SEPointNet(architectures.PointNetBase):
                         2 * latent_irreps,
                         *[latent_irreps] * 2,
                         latent_irreps,
-                    )
+                    ),
+                    dropout_prob=dropout_prob,
                 ),
             )
 

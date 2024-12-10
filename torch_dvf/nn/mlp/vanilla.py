@@ -1,12 +1,13 @@
 import torch
 
-from torch.nn import BatchNorm1d, Identity, Linear, ReLU
+from torch.nn import BatchNorm1d, Identity, Linear, ReLU, Sequential, Dropout
 
 
 class MLP(torch.nn.Module):
     def __init__(
         self,
         num_channels: tuple,
+        dropout_prob: float = 0.0,
         plain_last: bool = True,
         use_norm_in_first: bool = True,
         use_running_stats_in_norm: bool = False,
@@ -36,7 +37,12 @@ class MLP(torch.nn.Module):
             )
             self.activations.append(ReLU())
 
-        self.linear_layers.append(Linear(*num_channels[-2:]))
+        self.linear_layers.append(
+            Sequential(
+                Dropout(dropout_prob),
+                Linear(*num_channels[-2:])
+            )
+        )
 
         if plain_last:
             self.norm_layers.append(Identity())

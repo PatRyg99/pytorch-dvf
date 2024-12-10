@@ -12,6 +12,7 @@ class PointNet(architectures.PointNetBase):
         num_output_channels: int,
         num_hierarchies: int,
         num_latent_channels: int,
+        dropout_prob: float = 0.0,
         use_running_stats_in_norm: bool = False,
     ):
 
@@ -36,6 +37,7 @@ class PointNet(architectures.PointNetBase):
                     *[num_latent_channels] * 2,
                     num_output_channels,
                 ),
+                dropout_prob=dropout_prob,
                 use_norm_in_first=False,
                 use_running_stats_in_norm=use_running_stats_in_norm,
             ),
@@ -63,6 +65,7 @@ class PointNet(architectures.PointNetBase):
                         *[num_latent_channels] * 2,
                         num_latent_channels,
                     ),
+                    dropout_prob=dropout_prob,
                     use_running_stats_in_norm=use_running_stats_in_norm,
                 ),
             )
