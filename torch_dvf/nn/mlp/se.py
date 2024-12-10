@@ -30,15 +30,6 @@ def get_o3_swish_gate_irreps(irreps: Irreps):
     return irreps_dict
 
 
-class O3Dropout(nn.Module):
-    def __init__(self, dropout_prob: float = 0.0):
-        super().__init__()
-        self.dropout = nn.Dropout(dropout_prob)
-
-    def forward(self, data_in1, data_in2=None) -> torch.Tensor:
-        return self.dropout(data_in1), data_in2
-
-
 """
 The following classes (O3TensorProduct and O3SwishGate) are copied and adapted from "E(3) Steerable GNN" on GitHub
 (https://github.com/RobDHess/Steerable-E3-GNN).
@@ -57,11 +48,12 @@ class O3TensorProduct(nn.Module):
         Second input irreps.
     tp_rescale : bool
         If true, rescales the tensor product.
-
+    dropout_prob : bool
+        If true, append dropout with given probablity before layer.
     """
 
     def __init__(
-        self, irreps_in1, irreps_out, irreps_in2=None, tp_rescale=True
+        self, irreps_in1, irreps_out, irreps_in2=None, tp_rescale=True, dropout_prob=0.0
     ) -> None:
         super().__init__()
 
@@ -115,6 +107,8 @@ class O3TensorProduct(nn.Module):
         self.tensor_product_init()
         # Adapt parameters so they can be applied using vector operations.
         self.vectorise()
+        # Append dropout
+        self.dropout = nn.Dropout(dropout_prob)
 
     def tensor_product_init(self) -> None:
         with torch.no_grad():
@@ -205,6 +199,7 @@ class O3TensorProduct(nn.Module):
 
     def forward(self, data_in1, data_in2=None) -> torch.Tensor:
         # Apply the tensor product, the rescaling and the bias
+        data_in1 = self.dropout(data_in1)
         data_out = self.forward_tp_rescale_bias(data_in1, data_in2)
         return data_out
 
