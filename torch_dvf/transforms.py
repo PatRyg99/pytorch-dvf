@@ -36,7 +36,7 @@ class PointCloudHierarchy(ABC):
         batch = (
             data.surface_id.long()
             if hasattr(data, "surface_id")
-            else torch.zeros(pos.size(0), dtype=torch.long)
+            else torch.zeros(pos.size(0), dtype=torch.long, device=pos.device)
         )
 
         return {"pos": pos, "batch": batch}
